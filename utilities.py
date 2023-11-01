@@ -65,12 +65,12 @@ class Utilities(HyperParameters):
     
     
 class Plot_Epoch:
-    def __init__(self,checkpoint_path):
+    def __init__(self,checkpoint_path=None):
         self.checkpoint_path=checkpoint_path
         pass
     def plotperepoch(self,accuracy=None):
          # Example values for epochs 1 to 5
-        if accuracy == None:
+        if accuracy is None:
             raise ValueError( "required accuracy array but got None") 
         # Number of epochs (assuming accuracy_values represent epochs from 1 to N)
         clear_output(wait=True)
@@ -87,6 +87,16 @@ class Plot_Epoch:
         plt.legend()
         plt.show()
     
-    def checkpoints(self):
-        if self.
-
+    def checkpoints(self,model,optimizer,loss,epochs=0):
+        if self.checkpoint_path is None:
+            raise ValueError("Checkpoint path is not provided")
+        
+        if not os.path.exists(checkpoint_path):
+            os.makedirs(checkpoint_path)
+        
+        torch.save({
+            'epoch': epoch,
+            'model_state_dict': resnet_model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': loss.item()
+        }, checkpoint_path)
