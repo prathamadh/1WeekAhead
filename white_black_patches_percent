@@ -1,5 +1,24 @@
 !pip install patchify
 
+import pandas as pd
+train_dataset = pd.read_csv('/kaggle/input/UBC-OCEAN/train.csv')
+train_dataset.head()
+
+from glob import glob
+import cv2
+from patchify import patchify
+source_file = '/kaggle/input/UBC-OCEAN/train_images/'
+destination_file = '/kaggle/working/'
+images = sorted(glob('/kaggle/input/UBC-OCEAN/train_images/*'))
+images[0]
+
+from PIL import Image
+Image.MAX_IMAGE_PIXELS = None
+img = Image.open(images[0])
+print(img.size)
+
+!mkdir /kaggle/working/10077/
+
 def percent(numpy):
     '''Here image is RGB image'''
     image = Image.fromarray(numpy)
