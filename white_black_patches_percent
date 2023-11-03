@@ -1,0 +1,64 @@
+!pip install patchify
+
+def percent(numpy):
+    '''Here image is RGB image'''
+    image = Image.fromarray(numpy)
+    image_gray = image.convert('L')
+    width, height = image.size
+    total_pixels = width * height
+    array= np.asarray(image_gray)
+    black_pixels = np.count_nonzero(array < 10)
+#     print(black_pixels)
+    white_pixels = np.count_nonzero(array>250)
+#     print(white_pixels)
+    other_pixels = total_pixels - white_pixels - black_pixels
+    black_percentage = (black_pixels / total_pixels) 
+    white_percentage = (white_pixels / total_pixels) 
+    other_percentage = (other_pixels / total_pixels)
+    
+    return black_percentage, white_percentage, other_percentage
+
+from PIL import Image
+import numpy as np
+Image.MAX_IMAGE_PIXELS = None
+number = 256
+for i in range(1):
+    img = Image.open(images[i])
+    image = np.asarray(img)
+    del img
+    image_height, image_width, channel_count = image.shape
+    patch_height, patch_width, step = number, number, number
+    patch_shape = (patch_height, patch_width, channel_count)
+    patches = patchify(image, patch_shape, step=step)
+    print(patches.shape)
+    image_dataset = patches.reshape((-1, 256, 256, 3))
+    del patches
+    print(image_dataset.shape)
+    
+    for j in range(image_dataset.shape[0]):
+        
+#         for k in range(patches.shape[1]):
+        single_patch_img = image_dataset[j, :, :, :]
+        black_percent, white_percent, other_percent = percent(single_patch_img)
+        if (black_percent <= 0.4):
+            if not cv2.imwrite('/kaggle/working/'+str(j)+'.jpg', single_patch_img):
+                raise Exception("Could not write the image")  
+                
+        elif (white_percent <= 0.55 and black_percent <=0.2):
+            if not cv2.imwrite('/kaggle/working/'+str(j)+'.jpg', single_patch_img):
+                raise Exception("Could not write the image")
+                
+        elif (other_percent>0.3):
+            if not cv2.imwrite('/kaggle/working/'+str(j)+'.jpg', single_patch_img):
+                raise Exception("Could not write the image")
+        
+#         if j == 10000:
+#             break
+        
+#         if not cv2.imwrite('/kaggle/working/'+str(j)+'_'+str(k)+'.jpg', single_patch_img):
+#             raise Exception("Could not write the image")
+#         black_percent, white_percent = percent(filepath)
+#         if (black_percent >= 0.5 | white_percent >=0.85):
+#             !rm filepath
+#         elif (white_percent <= 0.5 & black_percent <=0.2):
+#             !rm filepath    
